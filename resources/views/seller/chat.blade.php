@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Produk</title>
+    <title>Chat Buyer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -74,8 +74,8 @@
                 📦 Daftar Produk
             </a>
 
-            <a class="active">
-                ➕ Tambah Produk
+            <a href="{{ route('seller.chat') }}" class="active">
+                💬 Chat Buyer
             </a>
 
             <form action="{{ route('logout') }}" method="GET">
@@ -86,53 +86,21 @@
 
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 content">
-            <h2 class="fw-bold mb-4">Tambah Produk</h2>
 
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    @foreach($errors->all() as $error)
-                        • {{ $error }}<br>
-                    @endforeach
-                </div>
-            @endif
+            <h2 class="fw-bold mb-4">💬 Chat Buyer</h2>
 
-            <div class="card p-4">
-                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+            <div class="card p-3">
 
-                    <div class="mb-3">
-                        <label class="form-label">Nama Produk</label>
-                        <input type="text" name="nama_produk" class="form-control" required>
+                @forelse ($chats as $chat)
+                    <div class="p-2 border-bottom">
+                        <b>{{ $chat->sender->name ?? 'Unknown' }}</b>
+                        <small class="text-muted d-block">{{ $chat->waktu }}</small>
+                        <p class="mt-1">{{ $chat->pesan }}</p>
                     </div>
+                @empty
+                    <p class="text-center text-muted">Belum ada pesan dari buyer.</p>
+                @endforelse
 
-                    <div class="mb-3">
-                        <label class="form-label">Kategori</label>
-                        <input type="text" name="kategori" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea name="deskripsi" class="form-control" rows="3"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Harga</label>
-                        <input type="number" name="harga" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Stok</label>
-                        <input type="number" name="stok" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Upload Gambar</label>
-                        <input type="file" name="gambar" class="form-control" accept="image/*">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Simpan Produk</button>
-                    <a href="{{ route('products.index') }}" class="btn btn-secondary">Kembali</a>
-                </form>
             </div>
         </div>
 

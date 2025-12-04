@@ -1,117 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Produk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
+            background-color: #f5f7fa;
         }
 
-        form div {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        input[type="file"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
+        .sidebar {
             background-color: #007bff;
+            min-height: 100vh;
             color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            padding-top: 30px;
         }
 
-        button:hover {
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin: 4px 10px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
             background-color: #0056b3;
         }
 
-        .back {
-            display: inline-block;
-            margin-top: 15px;
-            color: #555;
-            text-decoration: none;
+        .content {
+            padding: 30px;
         }
 
-        img {
-            max-width: 120px;
-            margin-top: 8px;
-            border-radius: 5px;
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 90%;
+            margin: 15px auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .logout-btn:hover {
+            background-color: #b52d3a;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .preview-img {
+            max-width: 160px;
+            border-radius: 8px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
+
 <body>
+<div class="container-fluid">
+    <div class="row">
 
-    <h1>Edit Produk</h1>
+        <!-- SIDEBAR SELLER -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4 class="text-center mb-4">Dashboard Seller</h4>
 
-    @if ($errors->any())
-        <div style="color:red;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+            <a href="{{ route('seller.dashboard') }}">
+                🏠 Dashboard
+            </a>
 
-    <form action="{{ route('products.update', $product->id_product) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
+            <a href="{{ route('products.index') }}">
+                📦 Daftar Produk
+            </a>
 
-        <div>
-            <label>Nama Produk</label>
-            <input type="text" name="nama_produk" value="{{ old('nama_produk', $product->nama_produk) }}" required>
-        </div>
+            <a class="active">
+                ✏️ Edit Produk
+            </a>
 
-        <div>
-            <label>Kategori</label>
-            <input type="text" name="kategori" value="{{ old('kategori', $product->kategori) }}" required>
+            <form action="{{ route('logout') }}" method="GET">
+                @csrf
+                <button type="submit" class="logout-btn">🚪 Logout</button>
+            </form>
         </div>
 
-        <div>
-            <label>Deskripsi</label>
-            <textarea name="deskripsi">{{ old('deskripsi', $product->deskripsi) }}</textarea>
-        </div>
+        <!-- MAIN CONTENT -->
+        <div class="col-md-9 col-lg-10 content">
 
-        <div>
-            <label>Harga</label>
-            <input type="number"  name="harga" value="{{ old('harga', $product->harga) }}" required>
-        </div>
+            <h2 class="fw-bold mb-4">Edit Produk</h2>
 
-        <div>
-            <label>Stok</label>
-            <input type="number" name="stok" value="{{ old('stok', $product->stok) }}" required>
-        </div>
-
-        <div>
-            <label>Gambar</label>
-            @if($product->gambar)
-                <br>
-                <img src="{{ asset('uploads/products/' . $product->gambar) }}" alt="{{ $product->nama_produk }}">
-                <br>
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    @foreach($errors->all() as $error)
+                        • {{ $error }}<br>
+                    @endforeach
+                </div>
             @endif
-            <input type="file" name="gambar">
-            <small>Biarkan kosong jika tidak ingin mengganti gambar.</small>
+
+            <div class="card p-4">
+                <form action="{{ route('products.update', $product->id_product) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="mb-3">
+                        <label class="form-label">Nama Produk</label>
+                        <input type="text" name="nama_produk" class="form-control"
+                               value="{{ old('nama_produk', $product->nama_produk) }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Kategori</label>
+                        <input type="text" name="kategori" class="form-control"
+                               value="{{ old('kategori', $product->kategori) }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea name="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $product->deskripsi) }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Harga</label>
+                        <input type="number" name="harga" class="form-control"
+                               value="{{ old('harga', $product->harga) }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Stok</label>
+                        <input type="number" name="stok" class="form-control"
+                               value="{{ old('stok', $product->stok) }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gambar Produk Saat Ini</label><br>
+
+                        @if($product->gambar)
+                            <img src="{{ asset('uploads/products/' . $product->gambar) }}" 
+                                 alt="{{ $product->nama_produk }}" class="preview-img">
+                        @else
+                            <p class="text-muted">Tidak ada gambar tersedia</p>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Gambar Baru</label>
+                        <input type="file" name="gambar" class="form-control" accept="image/*">
+                        <small class="text-muted">Biarkan kosong jika tidak ingin mengganti gambar.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
+                    <a href="{{ route('products.index') }}" class="btn btn-secondary">Kembali</a>
+
+                </form>
+            </div>
+
         </div>
 
-        <button type="submit">💾 Simpan Perubahan</button>
-    </form>
-
-    <a href="{{ route('products.index') }}" class="back">← Kembali ke Daftar Produk</a>
-
+    </div>
+</div>
 </body>
 </html>

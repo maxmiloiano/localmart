@@ -23,4 +23,9 @@ class Product extends Model
         'gambar',
         'id_category',
     ];
+
+     public function seller()
+    {
+        return $this->belongsTo(User::class, 'id_seller', 'id_user');
+    }
 }
