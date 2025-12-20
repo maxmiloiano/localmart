@@ -48,7 +48,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
     Route::get('/seller/chat', [ChatController::class, 'sellerChat'])->name('seller.chat');
-    Route::get('/seller/chat', [ChatController::class, 'sellerChat'])->name('seller.chat');
+    
 });
 
 // 🔹 BUYER Dashboard
@@ -58,4 +58,5 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
     Route::get('/buyer/products', [BuyerController::class, 'products'])->name('buyer.products');
     Route::get('/buyer/products/{id}', [BuyerController::class, 'productDetail'])->name('buyer.product.detail');
     Route::get('/buyer/chat/{sellerId}', [ChatController::class, 'buyerChat'])->name('buyer.chat');
+    Route::post('/buyer/chat/send', [ChatController::class, 'sendMessage'])->name('buyer.chat.send');
 });

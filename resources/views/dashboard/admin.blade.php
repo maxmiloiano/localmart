@@ -148,7 +148,7 @@
                                 <td>{{ $product->seller->name ?? '-' }}</td>
                                 <td>
                                     @if ($product->gambar)
-                                        <img src="{{ asset('storage/' . $product->gambar) }}" alt="Gambar Produk" width="60">
+                                        <img src="{{ asset('uploads/products/' . $product->gambar) }}" width="60">
                                     @else
                                         <span class="text-muted">Tidak ada</span>
                                     @endif

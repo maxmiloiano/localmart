@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
-    protected $table = 'chats';  
+    use HasFactory;
+
+    protected $table = 'chats';
     protected $primaryKey = 'id_chat';
+    public $timestamps = true;
 
     protected $fillable = [
         'id_sender',
@@ -16,13 +20,15 @@ class Chat extends Model
         'waktu'
     ];
 
+    // Relasi ke pengirim
     public function sender()
     {
-        return $this->belongsTo(User::class, 'id_sender');
+        return $this->belongsTo(User::class, 'id_sender', 'id_user');
     }
 
+    // Relasi ke penerima
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'id_receiver');
+        return $this->belongsTo(User::class, 'id_receiver', 'id_user');
     }
 }

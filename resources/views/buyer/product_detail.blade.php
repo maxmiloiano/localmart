@@ -72,7 +72,7 @@
                         <p><b>Penjual:</b> {{ $seller->name }}</p>
 
                         <div class="mt-4 d-flex gap-2">
-                            <a href="{{ route('buyer.chat', $seller->id_user) }}" class="btn btn-warning">
+                            <a href="{{ route('buyer.chat', $seller->id_user) }}?product={{ $product->id_product }}"class="btn btn-warning">
                                 💬 Chat Seller
                             </a>
 

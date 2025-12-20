@@ -75,7 +75,7 @@
             </a>
 
             <a href="{{ route('seller.chat') }}" class="active">
-                💬 Chat Buyer
+                💬 Chat Seller
             </a>
 
             <form action="{{ route('logout') }}" method="GET">
@@ -87,14 +87,16 @@
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 content">
 
-            <h2 class="fw-bold mb-4">💬 Chat Buyer</h2>
+            <h2 class="fw-bold mb-4">💬 Chat Seller</h2>
 
             <div class="card p-3">
 
                 @forelse ($chats as $chat)
                     <div class="p-2 border-bottom">
-                        <b>{{ $chat->sender->name ?? 'Unknown' }}</b>
-                        <small class="text-muted d-block">{{ $chat->waktu }}</small>
+                        <b>{{ $chat->sender->name }}</b>
+                        <p class="mb-0">{{ $chat->pesan }}</p>
+
+                         <small class="text-muted d-block">{{ $chat->waktu }}</small>
                         <p class="mt-1">{{ $chat->pesan }}</p>
                     </div>
                 @empty

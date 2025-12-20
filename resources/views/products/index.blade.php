@@ -74,7 +74,7 @@
                 📦 Daftar Produk
             </a>
              <a href="{{ route('seller.chat') }}">
-                💬 Chat Buyer
+                💬 Chat Seller
             </a>
 
             <form action="{{ route('logout') }}" method="GET">
