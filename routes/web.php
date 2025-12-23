@@ -47,8 +47,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // 🔹 SELLER Dashboard pakai Controller biar bisa kirim data
 Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::get('/seller/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
-    Route::get('/seller/chat', [ChatController::class, 'sellerChat'])->name('seller.chat');
-    
+
+    Route::get('/seller/chat', [ChatController::class, 'sellerChatList'])->name('seller.chat.list');
+
+    Route::get('/seller/chat/{buyerId}', [ChatController::class, 'sellerChatDetail'])
+        ->name('seller.chat.detail');
 });
 
 // 🔹 BUYER Dashboard
@@ -57,6 +60,21 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
     Route::get('/buyer/orders', [BuyerOrderController::class, 'index'])->name('buyer.orders');
     Route::get('/buyer/products', [BuyerController::class, 'products'])->name('buyer.products');
     Route::get('/buyer/products/{id}', [BuyerController::class, 'productDetail'])->name('buyer.product.detail');
+    Route::get('/buyer/chat', [ChatController::class, 'buyerChatList'])->name('buyer.chat.list');
     Route::get('/buyer/chat/{sellerId}', [ChatController::class, 'buyerChat'])->name('buyer.chat');
-    Route::post('/buyer/chat/send', [ChatController::class, 'sendMessage'])->name('buyer.chat.send');
+    Route::get('/buyer/cart', [BuyerController::class, 'cart'])->name('buyer.cart');
+    Route::get('/buyer/cart/add/{productId}',[BuyerController::class, 'addToCart'])->name('buyer.cart.add');
+    Route::post('/buyer/cart/update/{id}', [BuyerController::class, 'updateQty'])->name('buyer.cart.update');
+    Route::delete('/buyer/cart/{id}', [BuyerController::class, 'deleteItem'])->name('buyer.cart.delete');
+    Route::post('/buyer/checkout', [BuyerController::class, 'checkout'])->name('buyer.checkout');
+    Route::post('/buyer/checkout/process', [BuyerController::class, 'processCheckout'])->name('buyer.checkout.process');
+
 });
+/*
+|--------------------------------------------------------------------------
+| 7️⃣ CHAT SEND (GLOBAL - BUYER & SELLER)
+|--------------------------------------------------------------------------
+| Route INI YANG MENGATASI ERROR 403
+*/
+Route::middleware('auth')->post('/chat/send', [ChatController::class, 'sendMessage'])
+    ->name('chat.send');

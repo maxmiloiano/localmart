@@ -66,7 +66,7 @@
                 class="{{ request()->is('products') ? 'active' : '' }}">
                 📦 Daftar Produk
             </a>
-            <a href="{{ route('seller.chat') }}" class="{{ request()->is('seller/chat') ? 'active' : '' }}">
+            <a href="{{ route('seller.chat.list') }}" class="{{ request()->is('seller/chat') ? 'active' : '' }}">
                 💬 Chat Seller
             </a>
 

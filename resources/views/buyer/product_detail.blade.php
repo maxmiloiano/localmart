@@ -44,7 +44,9 @@
             <h4 class="text-center mb-4">Buyer Menu</h4>
 
             <a href="{{ route('buyer.dashboard') }}">🏠 Dashboard</a>
-            <a href="{{ route('buyer.products') }}" class="active">🛒 Produk</a>
+            <a href="{{ route('buyer.products') }}" class="active">📦 Produk</a>
+            <a href="{{ route('buyer.chat.list') }}">💬 Chat Buyer</a>
+            <a href="{{ route('buyer.cart') }}"> 🛒 Keranjang</a>
             <a href="{{ route('buyer.dashboard') }}#orders-section">📦 Pesanan Saya</a>
 
             <form action="{{ route('logout') }}" method="GET">
@@ -54,7 +56,11 @@
 
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 p-4">
-
+        <!-- BACK BUTTON -->
+                <a href="{{ route('buyer.products') }}"
+                class="btn btn-secondary mb-3">
+                    ⬅ 
+                </a>
             <div class="card p-4">
                 <div class="row">
                     <div class="col-md-5">
@@ -76,7 +82,7 @@
                                 💬 Chat Seller
                             </a>
 
-                            <a href="#" class="btn btn-success">
+                            <a href="{{ route('buyer.cart.add', $product->id_product) }}"class="btn btn-success">
                                 🛒 Tambah ke Keranjang
                             </a>
 

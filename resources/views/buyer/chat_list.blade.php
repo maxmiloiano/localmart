@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Seller</title>
+    <title>Chat Buyer</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -31,19 +31,13 @@
             background-color: #0056b3;
         }
 
-        .chat-box {
-            height: 350px;
-            overflow-y: auto;
-            background: #fff;
+        .chat-card {
             border-radius: 8px;
+            transition: 0.2s;
         }
 
-        .chat-item {
-            margin-bottom: 12px;
-        }
-
-        .chat-item small {
-            font-size: 12px;
+        .chat-card:hover {
+            background-color: #f1f5ff;
         }
     </style>
 </head>
@@ -70,40 +64,24 @@
 
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 p-4">
-            <!-- BACK BUTTON -->
-                <a href="{{ route('buyer.chat.list') }}"
-                class="btn btn-secondary mb-3">
-                    ⬅ 
-                </a>
-            <h4 class="mb-3">💬 Chat dengan {{ $seller->name }}</h4>
 
-            <!-- CHAT AREA -->
-            <div class="card chat-box p-3 mb-3">
-                @forelse ($chats as $chat)
-                    <div class="chat-item">
-                        <b>{{ $chat->sender->name }}</b>
-                        <p class="mb-1">{{ $chat->pesan }}</p>
-                        <small class="text-muted">{{ $chat->waktu }}</small>
-                    </div>
-                @empty
-                    <p class="text-center text-muted">Belum ada pesan</p>
-                @endforelse
-            </div>
+            <h4 class="fw-bold mb-3">💬 Daftar Chat Seller</h4>
+            <p class="text-muted">Pilih seller untuk melanjutkan percakapan</p>
 
-            <!-- FORM INPUT -->
-            <form action="{{ route('chat.send') }}" method="POST">
-                @csrf
-                <input type="hidden" name="id_receiver" value="{{ $seller->id_user }}">
-
-                <div class="input-group">
-                    <input type="text"
-                           name="pesan"
-                           class="form-control"
-                           placeholder="Tulis pesan..."
-                           required>
-                    <button class="btn btn-primary">Kirim</button>
+            <div class="card p-3">
+                <div class="list-group">
+                    @forelse($sellers as $seller)
+                        <a href="{{ route('buyer.chat', $seller->id_user) }}"
+                           class="list-group-item list-group-item-action chat-card">
+                            👤 <b>{{ $seller->name }}</b>
+                        </a>
+                    @empty
+                        <p class="text-center text-muted mb-0">
+                            Belum ada chat dengan seller
+                        </p>
+                    @endforelse
                 </div>
-            </form>
+            </div>
 
         </div>
     </div>

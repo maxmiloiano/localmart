@@ -17,16 +17,13 @@ class BuyerController extends Controller
         $buyer = Auth::user();
         $buyerId = $buyer->id_user;
 
-        // Ambil kategori
         $categories = DB::table('categories')->get();
 
-        // Produk terbaru (tanpa filter)
         $products = DB::table('products')
             ->orderBy('id_product', 'DESC')
             ->limit(8)
             ->get();
 
-        // Ambil pesanan buyer
         $ordersRaw = DB::table('orders')
             ->where('id_buyer', $buyerId)
             ->orderBy('id_order', 'DESC')
@@ -41,81 +38,205 @@ class BuyerController extends Controller
             ];
         });
 
-        // Statistik
-        $totalOrders = $orders->count();
+        $totalOrders      = $orders->count();
         $processingOrders = $orders->where('status', 'diproses')->count();
-        $shippingOrders = $orders->where('status', 'dikirim')->count();
-        $completedOrders = $orders->where('status', 'selesai')->count();
+        $shippingOrders   = $orders->where('status', 'dikirim')->count();
+        $completedOrders  = $orders->where('status', 'selesai')->count();
 
-        // Rekomendasi produk
         $recommendedProducts = DB::table('products')
             ->orderBy('id_product', 'DESC')
             ->limit(4)
             ->get();
 
-        return view('dashboard.buyer', [
-            'buyer' => $buyer,
-            'products' => $products,
-            'categories' => $categories,
-            'orders' => $orders,
-            'totalOrders' => $totalOrders,
-            'processingOrders' => $processingOrders,
-            'shippingOrders' => $shippingOrders,
-            'completedOrders' => $completedOrders,
-            'recommendedProducts' => $recommendedProducts
-        ]);
+        return view('dashboard.buyer', compact(
+            'buyer',
+            'products',
+            'categories',
+            'orders',
+            'totalOrders',
+            'processingOrders',
+            'shippingOrders',
+            'completedOrders',
+            'recommendedProducts'
+        ));
     }
 
-    // ======================================
-    // HALAMAN PRODUK TERPISAH
-    // ======================================
+    // ============================
+    // LIST PRODUK
+    // ============================
     public function products(Request $request)
     {
         $buyer = Auth::user();
-
-        // Ambil kategori
         $categories = DB::table('categories')->get();
 
-        // Produk dengan filter
         $products = DB::table('products')
-            ->when($request->search, function ($q) use ($request) {
-                $q->where('nama_produk', 'like', "%{$request->search}%");
-            })
-            ->when($request->category, function ($q) use ($request) {
-                $q->where('kategori', $request->category);
-            })
-            ->when($request->sort, function ($q) use ($request) {
-                if ($request->sort == 'price_asc') $q->orderBy('harga', 'asc');
-                if ($request->sort == 'price_desc') $q->orderBy('harga', 'desc');
-            })
+            ->when($request->search, fn ($q) =>
+                $q->where('nama_produk', 'like', '%' . $request->search . '%')
+            )
+            ->when($request->category, fn ($q) =>
+                $q->where('kategori', $request->category)
+            )
             ->orderBy('id_product', 'DESC')
             ->get();
 
-        return view('dashboard.buyer_products', [
-            'buyer' => $buyer,
-            'products' => $products,
-            'categories' => $categories,
-        ]);
+        return view('dashboard.buyer_products', compact(
+            'buyer',
+            'products',
+            'categories'
+        ));
     }
-    // ======================================
-    // HALAMAN DETAIL PRODUK BUYER
-    // ======================================
+
+    // ============================
+    // DETAIL PRODUK
+    // ============================
     public function productDetail($id)
     {
-        // Ambil produk berdasarkan id_product
-        $product = DB::table('products')->where('id_product', $id)->first();
+        $product = DB::table('products')
+            ->where('id_product', $id)
+            ->first();
 
-        if (!$product) {
-        abort(404);
-        }
+        if (!$product) abort(404);
 
-        // Ambil data seller produk
-        $seller = DB::table('users')->where('id_user', $product->id_seller)->first();
+        $seller = DB::table('users')
+            ->where('id_user', $product->id_seller)
+            ->first();
 
-        return view('buyer.product_detail', [
-        'product' => $product,
-        'seller'  => $seller
-     ]);
+        return view('buyer.product_detail', compact(
+            'product',
+            'seller'
+        ));
     }
 
+    // ============================
+    // KERANJANG
+    // ============================
+    public function cart()
+    {
+        $buyer = Auth::user();
+        $buyerId = $buyer->id_user;
+
+        $cartItems = DB::table('carts')
+            ->join('products', 'carts.id_product', '=', 'products.id_product')
+            ->join('users', 'products.id_seller', '=', 'users.id_user')
+            ->where('carts.id_buyer', $buyerId)
+            ->select(
+                'carts.id_cart',
+                'carts.qty',
+                'products.nama_produk',
+                'products.harga',
+                'products.gambar',
+                'users.id_user as seller_id',
+                'users.name as seller_name'
+            )
+            ->get()
+            ->groupBy('seller_id');
+
+        $totalHarga = 0;
+        foreach ($cartItems as $items) {
+            foreach ($items as $item) {
+                $totalHarga += $item->harga * $item->qty;
+            }
+        }
+
+        return view('buyer.cart', compact(
+            'buyer',
+            'cartItems',
+            'totalHarga'
+        ));
+    }
+
+    // ============================
+    // TAMBAH KE KERANJANG
+    // ============================
+    public function addToCart($productId)
+    {
+        $buyerId = Auth::user()->id_user;
+
+        $cart = DB::table('carts')
+            ->where('id_buyer', $buyerId)
+            ->where('id_product', $productId)
+            ->first();
+
+        if ($cart) {
+            DB::table('carts')
+                ->where('id_cart', $cart->id_cart)
+                ->increment('qty');
+        } else {
+            DB::table('carts')->insert([
+                'id_buyer' => $buyerId,
+                'id_product' => $productId,
+                'qty' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return redirect()->route('buyer.cart');
+    }
+
+    // ============================
+    // UPDATE QTY
+    // ============================
+    public function updateQty(Request $request, $id)
+    {
+        DB::table('carts')
+            ->where('id_cart', $id)
+            ->update([
+                'qty' => max(1, (int)$request->qty),
+                'updated_at' => now()
+            ]);
+
+        return redirect()->route('buyer.cart');
+    }
+
+    // ============================
+    // HAPUS ITEM
+    // ============================
+    public function deleteItem($id)
+    {
+        DB::table('carts')->where('id_cart', $id)->delete();
+        return redirect()->route('buyer.cart');
+    }
+
+    // ============================
+    // CHECKOUT (GROUP BY SELLER ✅)
+    // ============================
+    public function checkout(Request $request)
+    {
+        $buyer = Auth::user();
+
+        $cartItems = DB::table('carts')
+            ->join('products', 'carts.id_product', '=', 'products.id_product')
+            ->join('users', 'products.id_seller', '=', 'users.id_user')
+            ->whereIn('carts.id_cart', $request->cart_ids ?? [])
+            ->select(
+                'carts.id_cart',
+                'carts.qty',
+                'products.nama_produk',
+                'products.harga',
+                'products.gambar',
+                'users.id_user as seller_id',
+                'users.name as seller_name'
+            )
+            ->get()
+            ->groupBy('seller_id'); // ✅ BENAR
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('buyer.cart')
+                ->with('error', 'Pilih produk terlebih dahulu');
+        }
+
+        $totalHarga = 0;
+        foreach ($cartItems as $items) {
+            foreach ($items as $item) {
+                $totalHarga += $item->harga * $item->qty;
+            }
+        }
+
+        return view('buyer.checkout', compact(
+            'buyer',
+            'cartItems',
+            'totalHarga'
+        ));
+    }
 }

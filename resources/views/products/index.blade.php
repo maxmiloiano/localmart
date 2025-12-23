@@ -73,7 +73,7 @@
             <a href="{{ route('products.index') }}" class="active">
                 📦 Daftar Produk
             </a>
-             <a href="{{ route('seller.chat') }}">
+             <a href="{{ route('seller.chat.list') }}">
                 💬 Chat Seller
             </a>
 

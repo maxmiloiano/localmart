@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Buyer</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -55,6 +56,14 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
+        .chat-item {
+            margin-bottom: 12px;
+        }
+
+        .chat-item small {
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -62,21 +71,13 @@
 <div class="container-fluid">
     <div class="row">
 
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR SELLER -->
         <div class="col-md-3 col-lg-2 sidebar">
             <h4 class="text-center mb-4">Dashboard Seller</h4>
 
-            <a href="{{ route('seller.dashboard') }}">
-                🏠 Dashboard
-            </a>
-
-            <a href="{{ route('products.index') }}">
-                📦 Daftar Produk
-            </a>
-
-            <a href="{{ route('seller.chat') }}" class="active">
-                💬 Chat Seller
-            </a>
+            <a href="{{ route('seller.dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ route('products.index') }}">📦 Daftar Produk</a>
+            <a href="{{ route('seller.chat.list') }}" class="active">💬 Chat Seller</a>
 
             <form action="{{ route('logout') }}" method="GET">
                 @csrf
@@ -86,26 +87,44 @@
 
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 content">
+            <!-- BACK BUTTON -->
+                <a href="{{ route('seller.chat.list') }}"
+                class="btn btn-secondary mb-3">
+                    ⬅ 
+                </a>
+            <h2 class="fw-bold mb-4">💬 Chat dengan {{ $buyer->name }}</h2>
 
-            <h2 class="fw-bold mb-4">💬 Chat Seller</h2>
-
-            <div class="card p-3">
+            <!-- CHAT AREA -->
+            <div class="card p-3 mb-3">
 
                 @forelse ($chats as $chat)
-                    <div class="p-2 border-bottom">
+                    <div class="chat-item border-bottom pb-2">
                         <b>{{ $chat->sender->name }}</b>
-                        <p class="mb-0">{{ $chat->pesan }}</p>
-
-                         <small class="text-muted d-block">{{ $chat->waktu }}</small>
-                        <p class="mt-1">{{ $chat->pesan }}</p>
+                        <p class="mb-1">{{ $chat->pesan }}</p>
+                        <small class="text-muted">{{ $chat->waktu }}</small>
                     </div>
                 @empty
                     <p class="text-center text-muted">Belum ada pesan dari buyer.</p>
                 @endforelse
 
             </div>
-        </div>
 
+            <!-- FORM BALAS PESAN -->
+            <form action="{{ route('chat.send') }}" method="POST">
+                @csrf
+                <input type="hidden" name="id_receiver" value="{{ $buyer->id_user }}">
+
+                <div class="input-group">
+                    <input type="text"
+                           name="pesan"
+                           class="form-control"
+                           placeholder="Balas pesan..."
+                           required>
+                    <button class="btn btn-primary">Kirim</button>
+                </div>
+            </form>
+
+        </div>
     </div>
 </div>
 </body>

@@ -23,10 +23,7 @@
             border-radius: 5px;
             margin: 4px 10px;
         }
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color: #0056b3;
-        }
+        .sidebar a.active { background-color: #0056b3; }
         .logout-btn {
             background-color: #dc3545;
             color: white;
@@ -47,118 +44,78 @@
 <body>
 
 <div class="container-fluid">
-    <div class="row">
+<div class="row">
 
-        <!-- SIDEBAR -->
-        <div class="col-md-3 col-lg-2 sidebar">
-            <h4 class="text-center mb-4">Dashboard Buyer</h4>
+    <!-- SIDEBAR -->
+    <div class="col-md-3 col-lg-2 sidebar">
+        <h4 class="text-center mb-4">Dashboard Buyer</h4>
 
-            <a href="{{ route('buyer.dashboard') }}" class="{{ request()->is('buyer/dashboard') ? 'active' : '' }}">
-                🏠 Dashboard
-            </a>
+        <a href="{{ route('buyer.dashboard') }}" class="active">🏠 Dashboard</a>
+        <a href="{{ route('buyer.products') }}">📦 Produk</a>
+        <a href="{{ route('buyer.chat.list') }}">💬 Chat Buyer</a>
+        <a href="{{ route('buyer.cart') }}">🛒 Keranjang</a>
+        <a href="#orders-section">📦 Pesanan Saya</a>
 
-            <a href="{{ route('buyer.products') }}" class="{{ request()->is('buyer/products') ? 'active' : '' }}">
-                🛒 Produk
-            </a>
-            <a href="#orders-section">
-                📦 Pesanan Saya
-            </a>
-
-            <form action="{{ route('logout') }}" method="GET"> 
-                <button class="logout-btn">🚪 Logout</button>
-            </form>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="col-md-9 col-lg-10 p-4">
-
-            <h3 class="fw-bold">Selamat Datang, {{ $buyer->name }} 👋</h3>
-            <p>Senang melihat Anda kembali! Mulai belanja sekarang.</p>
-
-            <!-- Statistik -->
-            <div class="row g-3 mt-3">
-                <div class="col-md-3">
-                    <div class="card text-center p-3">
-                        <h6 class="text-muted">Total Pesanan</h6>
-                        <h3 class="fw-bold text-primary">{{ $totalOrders }}</h3>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card text-center p-3">
-                        <h6 class="text-muted">Diproses</h6>
-                        <h3 class="fw-bold text-warning">{{ $processingOrders }}</h3>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card text-center p-3">
-                        <h6 class="text-muted">Dikirim</h6>
-                        <h3 class="fw-bold text-info">{{ $shippingOrders }}</h3>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card text-center p-3">
-                        <h6 class="text-muted">Selesai</h6>
-                        <h3 class="fw-bold text-success">{{ $completedOrders }}</h3>
-                    </div>
-                </div>
-            </div>
-
-           <!-- Recommended products -->
-            <hr>
-            <h4 class="fw-bold">✨ Rekomendasi Produk</h4>
-
-            <div class="row g-3">
-                @foreach($recommendedProducts as $r)
-                <div class="col-md-3">
-                    <div class="card product-card p-2">
-                        <img src="{{ asset('uploads/products/' . $r->gambar) }}">
-                        <h6 class="mt-2">{{ $r->nama_produk }}</h6>
-                        <p class="fw-bold text-primary">Rp {{ number_format($r->harga) }}</p>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-
-            <!-- Pesanan -->
-            <hr class="my-4">
-            <h4 id="orders-section" class="fw-bold">📦 Pesanan Saya</h4>
-
-            <div class="card p-3">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID Order</th>
-                            <th>Tanggal</th>
-                            <th>Total Harga</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($orders as $o)
-                        <tr>
-                            <td>#{{ $o->id }}</td>
-                            <td>{{ $o->created_at->format('d M Y H:i') }}</td>
-                            <td>Rp {{ number_format($o->total) }}</td>
-                            <td>
-                                <span class="badge text-bg-{{ 
-                                    $o->status=='pending' ? 'secondary' : 
-                                    ($o->status=='diproses' ? 'warning' : 
-                                    ($o->status=='dikirim' ? 'info' : 'success')) }}">
-                                    {{ ucfirst($o->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
+        <form action="{{ route('logout') }}" method="GET">
+            <button class="logout-btn">🚪 Logout</button>
+        </form>
     </div>
+
+    <!-- CONTENT -->
+    <div class="col-md-9 col-lg-10 p-4">
+        <h3 class="fw-bold">Selamat Datang, {{ $buyer->name }} 👋</h3>
+
+        <!-- Statistik -->
+        <div class="row g-3 mt-3">
+            <div class="col-md-3"><div class="card p-3 text-center"><h6>Total Pesanan</h6><h3>{{ $totalOrders }}</h3></div></div>
+            <div class="col-md-3"><div class="card p-3 text-center"><h6>Diproses</h6><h3>{{ $processingOrders }}</h3></div></div>
+            <div class="col-md-3"><div class="card p-3 text-center"><h6>Dikirim</h6><h3>{{ $shippingOrders }}</h3></div></div>
+            <div class="col-md-3"><div class="card p-3 text-center"><h6>Selesai</h6><h3>{{ $completedOrders }}</h3></div></div>
+        </div>
+
+        <!-- Rekomendasi -->
+        <hr>
+        <h4 class="fw-bold">✨ Rekomendasi Produk</h4>
+
+        <div class="row g-3">
+            @foreach($recommendedProducts as $r)
+            <div class="col-md-3">
+                <div class="card product-card p-2">
+                    <img src="{{ asset('uploads/products/' . $r->gambar) }}">
+                    <h6 class="mt-2">{{ $r->nama_produk }}</h6>
+                    <p class="fw-bold text-primary">Rp {{ number_format($r->harga) }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- Orders -->
+        <hr id="orders-section">
+        <h4 class="fw-bold">📦 Pesanan Saya</h4>
+
+        <table class="table table-bordered bg-white">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tanggal</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($orders as $o)
+                <tr>
+                    <td>#{{ $o->id }}</td>
+                    <td>{{ $o->created_at->format('d M Y H:i') }}</td>
+                    <td>Rp {{ number_format($o->total) }}</td>
+                    <td>{{ ucfirst($o->status) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+    </div>
+</div>
 </div>
 
 </body>

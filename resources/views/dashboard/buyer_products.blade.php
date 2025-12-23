@@ -50,12 +50,15 @@
             </a>
 
             <a href="{{ route('buyer.products') }}" class="active">
-                🛒 Produk
+                📦 Produk
             </a>
-
-            <a href="{{ route('buyer.dashboard') }}#orders-section">
-                📦 Pesanan Saya
+            <a href="{{ route('buyer.chat.list') }}">
+                💬 Chat Buyer
             </a>
+            <a href="{{ route('buyer.cart') }}">
+                🛒 Keranjang
+            </a>
+            <a href="{{ route('buyer.dashboard') }}#orders-section">📦 Pesanan Saya</a>
 
             <form action="{{ route('logout') }}" method="GET"> 
                 <button class="btn btn-danger w-100 mt-3">Logout</button>
@@ -65,7 +68,7 @@
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10 p-4">
 
-            <h3 class="fw-bold">🛒 Semua Produk</h3>
+            <h3 class="fw-bold">📦 Semua Produk</h3>
             <p>Temukan produk terbaik untuk Anda.</p>
 
             <!-- Search & Filter -->
